@@ -1,12 +1,11 @@
 import React from 'react';
 import './globals.css';
 
+import { Routes, Route } from 'react-router-dom';
+
 const App = () => {
   return (
-    <div>
-        <h1 className = "text-3xl font-bold underline"> App underline</h1>
-     
-    </div>
+
   )
 }
 
