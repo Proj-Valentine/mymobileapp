@@ -1,10 +1,11 @@
 import React from 'react';
-import './globals.scss'
+import './globals.css';
 
 const App = () => {
   return (
     <div>
-      App
+        <h1 className = "text-3xl font-bold underline"> App underline</h1>
+     
     </div>
   )
 }
