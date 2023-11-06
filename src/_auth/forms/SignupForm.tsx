@@ -1,5 +1,6 @@
 // import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Link } from 'react-router-dom';
 
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form"
 import { Input } from "@/components/ui/input";
@@ -153,6 +154,12 @@ const SignupForm = () => {
               </div>
             ):("Sign up")}
           </Button>
+
+    {/* if user already have an account render a link component */}
+          <p className="text-small-regular text-light-2 text-center mt-2">
+            Already have an account?
+            <Link to="/sign-in" className="text-primary-500 text-small-semibold ml-1"> Log in</Link>
+          </p>
         </form>
       </div>
     </Form>
