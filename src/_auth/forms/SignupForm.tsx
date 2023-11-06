@@ -55,7 +55,7 @@ const SignupForm = () => {
         >
           <FormField
             control={form.control}
-            name="username"
+            name="name"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Name</FormLabel>
@@ -74,7 +74,8 @@ const SignupForm = () => {
               </FormItem>
             )}
           />
-
+          {/* copy and pasting form element to create other form fields  */}
+          {/* username */}
           <FormField
             control={form.control}
             name="username"
@@ -84,6 +85,50 @@ const SignupForm = () => {
                 <FormControl>
                   <Input
                     type="text"
+                    className="shad-input"
+                    placeholder="MrV"
+                    {...field}
+                  />
+                </FormControl>
+                {/* <FormDescription>
+                  This is your public display name.
+                </FormDescription> */}
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input
+                    type="email"
+                    className="shad-input"
+                    placeholder="vkampah28gmail.com"
+                    {...field}
+                  />
+                </FormControl>
+                {/* <FormDescription>
+                  This is your public display name.
+                </FormDescription> */}
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input
+                    type="password"
                     className="shad-input"
                     placeholder="valentine"
                     {...field}
@@ -97,7 +142,7 @@ const SignupForm = () => {
             )}
           />
 
-          <Button type="submit">Submit</Button>
+          <Button type="submit" className="shad-button_primary">Submit</Button>
         </form>
       </div>
     </Form>
