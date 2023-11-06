@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { SignupValidation} from "@/lib/validation";
 import { z } from 'zod';
+import Loader from "@/components/shared/Loader";
 
 // define a form schema: this is moved to the validations index.ts file to make it reusable
 // const formSchema = z.object({
@@ -16,6 +17,8 @@ import { z } from 'zod';
 
 
 const SignupForm = () => {
+  // creating a fake form field to load when SUBMIT is CLICKED
+  const isLoading= false;
   
   // 1. Define your form.
   const form = useForm<z.infer<typeof SignupValidation>>({
@@ -142,7 +145,14 @@ const SignupForm = () => {
             )}
           />
 
-          <Button type="submit" className="shad-button_primary">Submit</Button>
+          <Button type="submit" className="shad-button_primary">
+            {/* defining a Loader function to use instead of submit for users to see whats happening after clicking SIGN UP */}
+            {isLoading ? (
+              <div className="flex-center gap-2">
+                <Loader /> Loading...
+              </div>
+            ):("Sign up")}
+          </Button>
         </form>
       </div>
     </Form>
