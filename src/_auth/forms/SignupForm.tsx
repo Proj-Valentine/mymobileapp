@@ -32,8 +32,10 @@ const SignupForm = () => {
     },
   })
  
-  // 2. Define a submit handler.
+  // 2. Define a submit handler. ie what to do after submitting
   function onSubmit(values: z.infer<typeof SignupValidation>) {
+    // create new users upon SIGN IN
+    const newUser = await createUserAccount (values)
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values);
