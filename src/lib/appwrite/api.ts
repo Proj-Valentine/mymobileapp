@@ -56,3 +56,12 @@ export async function saveUserToDB(user:
 
 
 }
+
+export async function signInAccount(user: {email: string; password: string;}){
+    try{
+        // createEmailSession is a utility method in appwrite
+        const session = await account.createEmailSession(user.email,user.password)
+        return session
+    }catch(error) 
+    {console.log(error)}
+}

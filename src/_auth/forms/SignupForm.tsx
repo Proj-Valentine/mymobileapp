@@ -12,7 +12,10 @@ import { useForm } from "react-hook-form";
 import { SignupValidation} from "@/lib/validation";
 import { z } from 'zod';
 import Loader from "@/components/shared/Loader";
-import { createUserAccount } from "@/lib/appwrite/api";
+//  because we imported the mutation function, that mutate the createUserAccount function from appwrite api, we dont need to use it directly, we can use the mutated function
+// to which will call the function quickly using the react query functionality ie bridge the gap between front and backend
+// import { createUserAccount } from "@/lib/appwrite/api";
+import { useCreateUserAccount, useSignInAccount } from "@/lib/react-query/queriesAndMutations";
 
 // define a form schema: this is moved to the validations index.ts file to make it reusable
 // const formSchema = z.object({
@@ -22,33 +25,49 @@ import { createUserAccount } from "@/lib/appwrite/api";
 
 const SignupForm = () => {
   // creating a fake form field to load when SUBMIT is CLICKED
-  const { toast } = useToast()
-  const isLoading= false;
-  
+  const { toast } = useToast();
+  // const isLoading= false;
+
+  // the mutateAsync hook is the actual function we are calling in the useCreateUserAccountMutation function definition using mutation ie the createUserAccout function
+  // we can rename it using : newname thus ( mutateAsync: newname )
+  const { mutateAsync: createUserAccount, isLoading: isCreatingUser } =
+    useCreateUserAccount;
+
+    // call the useSignIn mutate hook
+  const { mutateAsync: signInAccount, isLoading: isSigningIn} = useSignInAccount()
+
   // 1. Define your form.
   const form = useForm<z.infer<typeof SignupValidation>>({
     resolver: zodResolver(SignupValidation),
     defaultValues: {
-      name:'',
-      username: '',
-      email:'',
-      password:'',
+      name: "",
+      username: "",
+      email: "",
+      password: "",
     },
-  })
- 
+  });
+
   // 2. Define a submit handler. ie what to do after submitting
   async function onSubmit(values: z.infer<typeof SignupValidation>) {
     // create new users upon SIGN IN
-    const newUser = await createUserAccount (values);
+    const newUser = await createUserAccount(values);
 
     // after creating user whats next you want to do, enter user into a session
 
-        // rendering a toast if user account fails to create ie a pop up message 
-    if (!newUser){
-      return toast ({title:" Sign up Failed. Please try again"});
+    // rendering a toast if user account fails to create ie a pop up message
+    if (!newUser) {
+      return toast({ title: " Sign up Failed. Please try again" });
     }
 
-    // const session = await signInAccount()
+    // create a sign in session
+    const session = await signInAccount({email: values.email, password: values.password,});
+
+    // check if signin session was succesful else return a TOAST
+    if (!session) {
+      return toast ({title: 'Sign in failed. Please try again.'})
+    }
+    // se need to store the session in our react context, so create a new context folder in src
+
 
     // Do something with the form values.
     console.log(newUser);
@@ -163,17 +182,25 @@ const SignupForm = () => {
 
           <Button type="submit" className="shad-button_primary">
             {/* defining a Loader function to use instead of submit for users to see whats happening after clicking SIGN UP */}
-            {isLoading ? (
+            {isCreatingUser ? (
               <div className="flex-center gap-2">
                 <Loader /> Loading...
               </div>
-            ):("Sign up")}
+            ) : (
+              "Sign up"
+            )}
           </Button>
 
-    {/* if user already have an account render a link component */}
+          {/* if user already have an account render a link component */}
           <p className="text-small-regular text-light-2 text-center mt-2">
             Already have an account?
-            <Link to="/sign-in" className="text-primary-500 text-small-semibold ml-1"> Log in</Link>
+            <Link
+              to="/sign-in"
+              className="text-primary-500 text-small-semibold ml-1"
+            >
+              {" "}
+              Log in
+            </Link>
           </p>
         </form>
       </div>
