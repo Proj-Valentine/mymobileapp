@@ -11,6 +11,8 @@ import RootLayout from './_root/RootLayout';
 
 import './globals.css';
 
+import { Toaster } from "@/components/ui/toaster";
+
 
 const App = () => {
   return (
@@ -30,6 +32,8 @@ const App = () => {
 
         </Route>
     </Routes>
+    {/* this will allow us to see the toaster on the page ie a prompt message, but the content will be defined in the specific component the toaster is used */}
+    <Toaster />
 
    </main>
   )

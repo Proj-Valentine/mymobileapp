@@ -1,6 +1,8 @@
 // import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from 'react-router-dom';
+// importing toaster hook
+import { useToast } from "@/components/ui/use-toast";
 
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form"
 import { Input } from "@/components/ui/input";
@@ -20,6 +22,7 @@ import { createUserAccount } from "@/lib/appwrite/api";
 
 const SignupForm = () => {
   // creating a fake form field to load when SUBMIT is CLICKED
+  const { toast } = useToast()
   const isLoading= false;
   
   // 1. Define your form.
@@ -38,11 +41,15 @@ const SignupForm = () => {
     // create new users upon SIGN IN
     const newUser = await createUserAccount (values);
 
-    // after creating user whats next you want to do
+    // after creating user whats next you want to do, enter user into a session
 
+        // rendering a toast if user account fails to create ie a pop up message 
     if (!newUser){
-      return;
+      return toast ({title:" Sign up Failed. Please try again"});
     }
+
+    // const session = await signInAccount()
+
     // Do something with the form values.
     console.log(newUser);
   }
