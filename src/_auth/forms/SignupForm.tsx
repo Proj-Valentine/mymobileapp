@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 // importing toaster hook
 import { useToast } from "@/components/ui/use-toast";
 
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form"
 import { Input } from "@/components/ui/input";
 
 import { Button } from "@/components/ui/button";
@@ -34,11 +34,12 @@ const SignupForm = () => {
 
   // the mutateAsync hook is the actual function we are calling in the useCreateUserAccountMutation function definition using mutation ie the createUserAccout function
   // we can rename it using : newname thus ( mutateAsync: newname )
-  const { mutateAsync: createUserAccount, isLoading: isCreatingUser } =
-    useCreateUserAccount;
+  const { mutateAsync: createUserAccount, isPending: isCreatingAccount } =
+    useCreateUserAccount();
 
     // call the useSignIn mutate hook
-  const { mutateAsync: signInAccount, isLoading: isSigningIn} = useSignInAccount()
+  const { mutateAsync: signInAccount, isPending: isSigningIn } =
+    useSignInAccount();
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof SignupValidation>>({
@@ -194,7 +195,7 @@ const SignupForm = () => {
 
           <Button type="submit" className="shad-button_primary">
             {/* defining a Loader function to use instead of submit for users to see whats happening after clicking SIGN UP */}
-            {isCreatingUser ? (
+            {isCreatingAccount ? (
               <div className="flex-center gap-2">
                 <Loader /> Loading...
               </div>

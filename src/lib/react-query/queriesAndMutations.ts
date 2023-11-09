@@ -7,6 +7,7 @@ import { INewUser } from '@/types';
 
 // export first mutation
 // mutation mutates a function, in this case the useCreateUserAccountMutation, mutates the createUserAccount
+
 export const useCreateUserAccount = () => {
     return useMutation({
         mutationFn: (user: INewUser) => createUserAccount(user)

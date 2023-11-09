@@ -26,8 +26,8 @@ export const appwriteConfig = {
 //  add configuration to client using project ID and API endpoint
 
 export const client = new Client();
-client.setProject(appwriteConfig.projectID)
 client.setEndpoint(appwriteConfig.url)
+client.setProject(appwriteConfig.projectID)
 export const account = new Account(client);
 export const databases = new  Databases (client);
 export const storage = new Storage(client);
