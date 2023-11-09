@@ -1,6 +1,6 @@
 // import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 // importing toaster hook
 import { useToast } from "@/components/ui/use-toast";
 
@@ -17,6 +17,8 @@ import Loader from "@/components/shared/Loader";
 // import { createUserAccount } from "@/lib/appwrite/api";
 import { useCreateUserAccount, useSignInAccount } from "@/lib/react-query/queriesAndMutations";
 
+import { useUserContext } from "@/context/AuthContext";
+
 // define a form schema: this is moved to the validations index.ts file to make it reusable
 // const formSchema = z.object({
 //   username: z.string().min(2).max(50),
@@ -26,6 +28,8 @@ import { useCreateUserAccount, useSignInAccount } from "@/lib/react-query/querie
 const SignupForm = () => {
   // creating a fake form field to load when SUBMIT is CLICKED
   const { toast } = useToast();
+  const { checkAuthUser, isLoading: isUserLoading} = useUserContext();
+  const navigate = useNavigate();
   // const isLoading= false;
 
   // the mutateAsync hook is the actual function we are calling in the useCreateUserAccountMutation function definition using mutation ie the createUserAccout function
@@ -67,10 +71,18 @@ const SignupForm = () => {
       return toast ({title: 'Sign in failed. Please try again.'})
     }
     // se need to store the session in our react context, so create a new context folder in src
+    // import the context variable to checkAuthuser and if isLogged in, reset the form
+    const isLoggedIn = await checkAuthUser();
 
+    if (isLoggedIn) {
+      form.reset();
+      navigate("/");
+    } else {
+      return toast({ title: "Sign up failed. Please try again" });
+    }
 
     // Do something with the form values.
-    console.log(newUser);
+    // console.log(newUser);
   }
 
   return (
