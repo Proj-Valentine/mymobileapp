@@ -1,11 +1,13 @@
 import { useEffect } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "../ui/button";
 import { useSignOutAccount } from "@/lib/react-query/queriesAndMutations";
 import { useUserContext } from "@/context/AuthContext";
 import { sidebarLinks } from "@/constants";
 import { INavLink } from "@/types";
 const LeftSidebar = () => {
+
+    const { pathname } = useLocation();
 
     const { mutate: signOut, isSuccess } = useSignOutAccount();
 
@@ -48,16 +50,25 @@ const LeftSidebar = () => {
 
           <ul className="flex flex-col gap-6">
             {sidebarLinks.map((link: INavLink)=> {
+                // is Active will return a boolean to check if pathname ie contains the loaction ie url of an element
+                const isActive = pathname === link.route
                 return (
-                  <li key={link.label} className="leftsidebar-link">
+                  <li
+                    key={link.label}
+                    // adding a background color to show the link/page we are on (that is active) 
+                    // if we are on the page useLocation variable will return the url of the page ie the route
+                    // adding group class to extend the hover from li to the children
+                    className={`leftsidebar-link group ${isActive && 'bg-primary-500' }`}
+                  >
                     <NavLink
                       to={link.route}
                       className="flex gap-4 items-center p-4"
                     >
                       <img
-                      src={link.imgURL}
-                      alt={link.label}
-                      className="group-hover:invert-white"/>
+                        src={link.imgURL}
+                        alt={link.label}
+                        className={`group-hover:invert-white ${isActive && 'invert-white'}`}
+                      />
                       {link.label}
                     </NavLink>
                   </li>
