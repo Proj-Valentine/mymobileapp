@@ -1,47 +1,34 @@
-// import * as z from "zod";
+import * as z from "zod";
+import { useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, useNavigate } from 'react-router-dom';
-// importing toaster hook
+
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  FormDescription
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import Loader from "@/components/shared/Loader";
 import { useToast } from "@/components/ui/use-toast";
 
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form"
-import { Input } from "@/components/ui/input";
-
-import { Button } from "@/components/ui/button";
-import { useForm } from "react-hook-form";
-import { SignupValidation} from "@/lib/validation";
-import { z } from 'zod';
-import Loader from "@/components/shared/Loader";
-//  because we imported the mutation function, that mutate the createUserAccount function from appwrite api, we dont need to use it directly, we can use the mutated function
-// to which will call the function quickly using the react query functionality ie bridge the gap between front and backend
-// import { createUserAccount } from "@/lib/appwrite/api";
-import { useCreateUserAccount, useSignInAccount } from "@/lib/react-query/queriesAndMutations";
-
+import {
+  useCreateUserAccount,
+  useSignInAccount,
+} from "@/lib/react-query/queriesAndMutations";
+import { SignupValidation } from "@/lib/validation";
 import { useUserContext } from "@/context/AuthContext";
 
-// define a form schema: this is moved to the validations index.ts file to make it reusable
-// const formSchema = z.object({
-//   username: z.string().min(2).max(50),
-// })
-
-
 const SignupForm = () => {
-  // creating a fake form field to load when SUBMIT is CLICKED
   const { toast } = useToast();
-  const { checkAuthUser, isLoading: isUserLoading} = useUserContext();
   const navigate = useNavigate();
-  // const isLoading= false;
+  const { checkAuthUser, isLoading: isUserLoading } = useUserContext();
 
-  // the mutateAsync hook is the actual function we are calling in the useCreateUserAccountMutation function definition using mutation ie the createUserAccout function
-  // we can rename it using : newname thus ( mutateAsync: newname )
-  const { mutateAsync: createUserAccount, isPending: isCreatingAccount } =
-    useCreateUserAccount();
-
-    // call the useSignIn mutate hook
-  const { mutateAsync: signInAccount, isPending: isSigningIn } =
-    useSignInAccount();
-
-  // 1. Define your form.
   const form = useForm<z.infer<typeof SignupValidation>>({
     resolver: zodResolver(SignupValidation),
     defaultValues: {
@@ -52,56 +39,69 @@ const SignupForm = () => {
     },
   });
 
-  // 2. Define a submit handler. ie what to do after submitting
-  async function onSubmit(values: z.infer<typeof SignupValidation>) {
-    // create new users upon SIGN IN
-    const newUser = await createUserAccount(values);
+  // Queries
+  const { mutateAsync: createUserAccount, isPending: isCreatingAccount } =
+    useCreateUserAccount();
+  const { mutateAsync: signInAccount, isPending: isSigningInUser } =
+    useSignInAccount();
 
-    // after creating user whats next you want to do, enter user into a session
+  // Handler to call on Submit of form
+  const handleSignup = async (user: z.infer<typeof SignupValidation>) => {
+    try {
+      // create user account
+      const newUser = await createUserAccount(user);
 
-    // rendering a toast if user account fails to create ie a pop up message
-    if (!newUser) {
-      return toast({ title: " Sign up Failed. Please try again" });
+      // call a toast if account creation fail
+      if (!newUser) {
+        toast({ title: "Sign up failed. Please try again." });
+
+        return;
+      }
+      // sign in after account creation
+      const session = await signInAccount({
+        email: user.email,
+        password: user.password,
+      });
+      // make a toast if session sign in fails and navigate to sign in Page
+      if (!session) {
+        toast({ title: "Something went wrong. Please login your new account" });
+
+        navigate("/sign-in");
+
+        return;
+      }
+
+      // reset forms after user logs in and navigate to home or send a toast message to try again
+      const isLoggedIn = await checkAuthUser();
+
+      if (isLoggedIn) {
+        form.reset();
+
+        navigate("/");
+      } else {
+        toast({ title: "Login failed. Please try again." });
+
+        return;
+      }
+    } catch (error) {
+      console.log({ error });
     }
-
-    // create a sign in session
-    const session = await signInAccount({email: values.email, password: values.password,});
-
-    // check if signin session was succesful else return a TOAST
-    if (!session) {
-      return toast ({title: 'Sign in failed. Please try again.'})
-    }
-    // se need to store the session in our react context, so create a new context folder in src
-    // import the context variable to checkAuthuser and if isLogged in, reset the form
-    const isLoggedIn = await checkAuthUser();
-
-    if (isLoggedIn) {
-      form.reset();
-      navigate("/");
-    } else {
-      return toast({ title: "Sign up failed. Please try again" });
-    }
-
-    // Do something with the form values.
-    // console.log(newUser);
-  }
+  };
 
   return (
-    // <div> delete div to make form the outer element
     <Form {...form}>
       <div className="sm:w-420 flex-center flex-col">
         <img src="/assets/images/logo.svg" alt="logo" />
+
         <h2 className="h3-bold md:h2-bold pt-5 sm:pt-12">
-          {" "}
           Create a new account
         </h2>
-        <p className="text-light-3 small-medium md:base-regular mt-12">
-          {" "}
-          Enter your details to use SNAPGRAM
+        <p className="text-light-3 small-medium md:base-regular mt-2">
+          To use snapgram, Please enter your details
         </p>
 
         <form
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={form.handleSubmit(handleSignup)}
           className="flex flex-col gap-5 w-full mt-4"
         >
           <FormField
@@ -109,41 +109,37 @@ const SignupForm = () => {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Name</FormLabel>
+                <FormLabel className="shad-form_label">Name</FormLabel>
                 <FormControl>
                   <Input
                     type="text"
                     className="shad-input"
-                    placeholder="valentine"
                     {...field}
+                    placeholder="Kwame V"
                   />
                 </FormControl>
-                {/* <FormDescription>
-                  This is your public display name.
-                </FormDescription> */}
                 <FormMessage />
               </FormItem>
             )}
           />
-          {/* copy and pasting form element to create other form fields  */}
-          {/* username */}
+
           <FormField
             control={form.control}
             name="username"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Username</FormLabel>
+                <FormLabel className="shad-form_label">Username</FormLabel>
                 <FormControl>
                   <Input
                     type="text"
                     className="shad-input"
-                    placeholder="MrV"
                     {...field}
+                    placeholder="MrV"
                   />
                 </FormControl>
-                {/* <FormDescription>
+                <FormDescription>
                   This is your public display name.
-                </FormDescription> */}
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -154,18 +150,15 @@ const SignupForm = () => {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel className="shad-form_label">Email</FormLabel>
                 <FormControl>
                   <Input
-                    type="email"
+                    type="text"
                     className="shad-input"
-                    placeholder="vkampah28gmail.com"
                     {...field}
+                    placeholder="mrv@gmail.com"
                   />
                 </FormControl>
-                {/* <FormDescription>
-                  This is your public display name.
-                </FormDescription> */}
                 <FormMessage />
               </FormItem>
             )}
@@ -176,60 +169,52 @@ const SignupForm = () => {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel className="shad-form_label">Password</FormLabel>
                 <FormControl>
                   <Input
                     type="password"
                     className="shad-input"
-                    placeholder="valentine"
                     {...field}
+                    placeholder="MrV"
                   />
                 </FormControl>
-                {/* <FormDescription>
-                  This is your public display name.
-                </FormDescription> */}
                 <FormMessage />
               </FormItem>
             )}
           />
 
           <Button type="submit" className="shad-button_primary">
-            {/* defining a Loader function to use instead of submit for users to see whats happening after clicking SIGN UP */}
-            {isCreatingAccount ? (
+            {isCreatingAccount || isSigningInUser || isUserLoading ? (
               <div className="flex-center gap-2">
                 <Loader /> Loading...
               </div>
             ) : (
-              "Sign up"
+              "Sign Up"
             )}
           </Button>
 
-          {/* if user already have an account render a link component */}
           <p className="text-small-regular text-light-2 text-center mt-2">
             Already have an account?
             <Link
               to="/sign-in"
               className="text-primary-500 text-small-semibold ml-1"
             >
-              {" "}
               Log in
             </Link>
           </p>
         </form>
       </div>
     </Form>
-    // </div>
   );
-}
+};
 
-export default SignupForm
+export default SignupForm;
 
 
-
+// NOTES
 // IMPORTED ZOD TO USE TO VALIDATE shadcn form schema
 // import * as z from "zod"
 
 // const formSchema = z.object({
 //   username: z.string().min(2).max(50),
 // })
-
