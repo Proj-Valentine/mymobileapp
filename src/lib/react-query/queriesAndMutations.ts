@@ -4,8 +4,9 @@ import {
     useQueryClient, 
     useInfiniteQuery} from '@tanstack/react-query';
 
-import { createUserAccount, signInAccount, signOutAccount } from "@/lib/appwrite/api";
-import { INewUser } from '@/types';
+import { createPost, createUserAccount, signInAccount, signOutAccount } from "@/lib/appwrite/api";
+import { INewPost, INewUser } from '@/types';
+import { QUERY_KEYS } from './queryKeys';
 // useQuery are for fetching data
 // use mutations for modifying data
 // to simplify data fetching and mutation
@@ -32,4 +33,23 @@ export const useSignOutAccount = () => {
     return useMutation({
         mutationFn: signOutAccount
     })
+}
+
+export const useCreatePost = () => {
+    // since we  wanna  query existing post and show them online 
+
+    const queryClient = useQueryClient();
+
+
+
+    return useMutation({
+        mutationFn: (post: INewPost) => createPost(post),
+        onSuccess: () => {
+            // after we create a new post we invalidate the query fro the recent post
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEYS.GET_RECENT_POSTS]
+            })
+
+        }
+})
 }

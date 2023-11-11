@@ -1,7 +1,7 @@
 //  after establishing and connecting to client, creating a function to perform an action
-import { INewUser} from "@/types";
+import { INewPost, INewUser} from "@/types";
 import { ID, Query } from "appwrite";
-import { account, appwriteConfig, avatars, databases } from "./config";
+import { account, appwriteConfig, avatars, databases, storage } from "./config";
 
 // in typescript types are enforced when defining functions , so INewUser is a variable that has its values as data:type key value pairs inside the 'type' folder in the index.ts file
 //  So this funcion saves the Users Account and saves user information to the database
@@ -115,4 +115,100 @@ export async function signOutAccount(){
     catch(error) {
         console.log(error)
     }
+}
+
+// created the four functions below to create a post and save to Database
+
+export async function createPost( post: INewPost) {
+    try{
+        // upload image to storage
+        const  uploadedFile = await uploadFile(post.file[0]);
+
+        if(!uploadedFile) throw Error;
+
+        const fileUrl= getFilePreview(uploadedFile.$id);
+
+        // if file url is corrupted delete it
+        if (!fileUrl) {
+            deleteFile(uploadedFile.$id)
+            throw Error;
+        }
+
+        // convert tags to an array
+
+        const tags = post.tags?.replace(/ /g,'').split(',') || []
+
+        //save post to Database
+        const newPost = await databases.createDocument(
+            appwriteConfig.databaseId, 
+            appwriteConfig.postCollectionId,
+            ID.unique(),
+            {
+                creator: post.userId,
+                caption: post.caption,
+                imageUrl: fileUrl,
+                imageId: uploadedFile.$id,
+                location: post.location,
+                tags: tags
+            }
+        )
+
+        if (!newPost) {
+            await deleteFile(uploadedFile.$id)
+            throw Error;
+            }
+
+        return newPost
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+export async function uploadFile(file: File) {
+    try{
+        // to save media
+        const uploadedFile = await storage.createFile(
+            appwriteConfig.storageId,
+            ID.unique(),
+            file
+        );
+
+        return uploadedFile
+
+    } catch (error) {
+        console.log(error)
+    }
+    
+}
+
+// preview file to see width 2000 , height 2000 , gravity ie where its going to show "top", and Quality 100
+export async function getFilePreview (fileId: string) {
+    try{
+        const fileUrl = storage.getFilePreview(
+            appwriteConfig.storageId,
+            fileId,
+            2000,
+            2000,
+            "top",
+            100,
+        )
+
+        return fileUrl
+
+    } catch (error) {
+        console.log(error)
+    }
+    
+}
+
+export async function deleteFile(fileId: string) {
+    try{
+        await storage.deleteFile(appwriteConfig.storageId, fileId);
+
+        return { status: 'ok'}
+
+    } catch (error) {
+        console.log(error)
+    }
+    
 }
