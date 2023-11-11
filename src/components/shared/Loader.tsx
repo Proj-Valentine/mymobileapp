@@ -1,6 +1,6 @@
 import React from 'react'
 
-const loader = () => {
+const Loader = () => {
   return (
     <div className="flex-center w-full">
         <img 
@@ -14,4 +14,4 @@ const loader = () => {
   )
 }
 
-export default loader
+export default Loader
