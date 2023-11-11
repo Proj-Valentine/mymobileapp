@@ -182,7 +182,8 @@ export async function uploadFile(file: File) {
 }
 
 // preview file to see width 2000 , height 2000 , gravity ie where its going to show "top", and Quality 100
-export async function getFilePreview (fileId: string) {
+// removing async function because only a promise is returned wihcih makes the imageUrl get a value of an empty list
+export function getFilePreview (fileId: string) {
     try{
         const fileUrl = storage.getFilePreview(
             appwriteConfig.storageId,
@@ -211,4 +212,22 @@ export async function deleteFile(fileId: string) {
         console.log(error)
     }
     
+}
+
+// QUERY DATABASE TO SHOW TOP 20 POST
+export async function getRecentPosts() {
+    try{
+        const posts = await databases.listDocuments(
+            appwriteConfig.databaseId,
+            appwriteConfig.postCollectionId,
+            [Query.orderDesc('$createdAt'), Query.limit(20)]
+        )
+
+        if(!posts) throw Error;
+
+        return posts;
+
+    } catch(error){
+        console.log(error)
+    }
 }
