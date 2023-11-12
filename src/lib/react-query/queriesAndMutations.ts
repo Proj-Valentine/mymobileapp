@@ -4,8 +4,8 @@ import {
     useQueryClient, 
     useInfiniteQuery} from '@tanstack/react-query';
 
-import { createPost, createUserAccount, deleteSavedPost, getCurrentUser, getPostById, getRecentPosts, likePost, savePost, signInAccount, signOutAccount } from "@/lib/appwrite/api";
-import { INewPost, INewUser } from '@/types';
+import { createPost, createUserAccount, deletePost, deleteSavedPost, getCurrentUser, getPostById, getRecentPosts, likePost, savePost, signInAccount, signOutAccount, updatePost } from "@/lib/appwrite/api";
+import { INewPost, INewUser, IUpdatePost } from '@/types';
 import { QUERY_KEYS } from './queryKeys';
 // useQuery are for fetching data
 // use mutations for modifying data
@@ -136,5 +136,38 @@ export const useGetPostById = (postId: string) => {
         queryFn:() => getPostById(postId), 
         // enabled data fetch only when fetching data for another ID
         enabled:  !!postId
+    })
+}
+// cosume the updatePost api
+
+export const useUpdatePost = () => {
+
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn:(post: IUpdatePost) => updatePost(post), 
+        // on success get the data and invalidate the query
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({
+                queryKey:[QUERY_KEYS.GET_POST_BY_ID, data?.$id]
+            })
+
+        }
+    })
+}
+
+export const useDeletePost = () => {
+
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn:({postId, imageId}: {postId:string,imageId:string}) => deletePost(postId, imageId), 
+        // on success get the data and invalidate the query
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey:[QUERY_KEYS.GET_RECENT_POSTS]
+            })
+
+        }
     })
 }
