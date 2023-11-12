@@ -16,7 +16,7 @@ const FileUploader = ({fieldChange, mediaUrl}: FileUploaderProps) => {
   //useState<FIle[]>() : <FIle[]> is used to define what file is ie an array of files
 
   const [file, setFile] = useState<File[]>([]);
-  const [fileUrl, setFileUrl] = useState("");
+  const [fileUrl, setFileUrl] = useState(mediaUrl);
 
   const onDrop = useCallback(
     (acceptedFiles: FileWithPath[]) => {
@@ -32,10 +32,17 @@ const FileUploader = ({fieldChange, mediaUrl}: FileUploaderProps) => {
   const { getRootProps, getInputProps } = useDropzone(
     {
       onDrop,
-      accept: { "image/*": [".png", ".jpeg", ".jpg", ".svg"] },
+      accept: { "image/*": [".png", ".jpeg", ".jpg", '.svg'] },
     },
     [file]
   );
+
+//   const { getRootProps, getInputProps } = useDropzone({
+//     onDrop,
+//     accept: {
+//       "image/*": [".png", ".jpeg", ".jpg"],
+//     },
+//   });
 
   return (
     <div
@@ -49,7 +56,7 @@ const FileUploader = ({fieldChange, mediaUrl}: FileUploaderProps) => {
             <img
               src={fileUrl}
               alt="image"
-              // className="file_uploader-img"
+            //   className="file_uploader-img"
               className="rounded-full"
             />
           </div>

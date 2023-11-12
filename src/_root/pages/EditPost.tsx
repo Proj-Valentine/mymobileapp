@@ -2,19 +2,17 @@
 import PostForm from "@/components/forms/PostForm";
 import Loader from "@/components/shared/Loader";
 import { useGetPostById } from "@/lib/react-query/queriesAndMutations";
-import { Models } from "appwrite";
 import { useParams } from "react-router-dom";
 
-type PostType = {
-    post: Models.Document;
-}
+
 
 const EditPost = () => {
   // bring back the OLD POST so we create an API function in our appwrite to fetch post from appwritea
 
   const { id } = useParams();
 
-  const { data: post, isPending } = useGetPostById(id||"")
+  const { data: post, isPending } = useGetPostById(id || "")
+  // console.log (post?.imageUrl)
 
   if (isPending) return <Loader/>
 
@@ -31,7 +29,7 @@ const EditPost = () => {
           <h2 className="h3-bold md:h2-bold text-left w-full">Edit Post</h2>
         </div>
 
-        <PostForm action="update" post = {post} />
+        <PostForm action="Update" post = {post} />
       </div>
     </div>
   );
