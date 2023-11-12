@@ -1,7 +1,8 @@
 import { useDeleteSavedPost, useGetCurrentUser, useLikePost, useSavePost } from "@/lib/react-query/queriesAndMutations";
 import { checkIsLiked } from "@/lib/utils";
 import { Models } from "appwrite";
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
+import Loader from "./Loader";
 
 // create type for post props
 type PostStatsProps = {
@@ -10,61 +11,74 @@ type PostStatsProps = {
 };
 
 const PostStats = ({post, userId}: PostStatsProps) => {
+  // current likes on a post
 
-    // current likes on a post
+  const likesList = post.likes.map((user: Models.Document) => user.$id);
 
-    const likesList = post.likes.map((user: Models.Document) => user.$id)
+  // create two use state
+  const [likes, setLikes] = useState(likesList);
+  const [isSaved, setIsSaved] = useState(false);
 
-    // create two use state
-    const [ likes, setLikes ] = useState(likesList);
-    const [isSaved, setIsSaved] = useState(false);
+  const { mutate: likePost } = useLikePost();
+  const { mutate: savePost,isPending: isSavingPost } = useSavePost();
+  const { mutate: deleteSavedPost, isPending: isDeletingSaved } = useDeleteSavedPost();
 
-    const { mutate: likePost } = useLikePost();
-    const { mutate: savePost } = useSavePost();
-    const { mutate: deleteSavedPost } = useDeleteSavedPost();
+ 
 
-    // find current logged in user
-    const {data: currentUser} = useGetCurrentUser();
+  // find current logged in user
+  const { data: currentUser } = useGetCurrentUser();
 
-    // functions to Like, dislike, save and unsave post
+  // need to get the current SAVED state of the post when the page is RELOADED just like for the LIKES
 
-    const handleLikePost = (e: React.MouseEvent) => {
-        // stop porpagation helps incase the main CONTAINER is clickable, allows you to click only on the like icon  and not open the outer container with the click
-        e.stopPropagation()
+  const savedPostRecord = currentUser?.save.find(
+    (record: Models.Document) => record.post.$id === post.$id
+  );
 
-        let newLikes= [...likes];
+    // console.log(savedPostRecord);
+    //  console.log(currentUser);
 
-        const hasLiked = newLikes.includes(userId)
+  // pass a call bacck function to
+  useEffect(() => {
+    // setIsSaved(savedPostRecord? true:false); THIS CODE CAN BE WRITTEN AS BELOW ie auto boolean assignment
+    // eg {saved:true} =>!saved =>!false =true
+    // !!test
+    // 'test' => !test => !false =true
+    // empty string : '' => !''=>true =false
+    setIsSaved(!!savedPostRecord);
+  }, [currentUser]);
+  // functions to Like, dislike, save and unsave post
 
-        if(hasLiked) {
-            newLikes= newLikes.filter((id) => id !== userId)
-        } else {
-            newLikes.push(userId)
-        }
+  const handleLikePost = (e: React.MouseEvent) => {
+    // stop porpagation helps incase the main CONTAINER is clickable, allows you to click only on the like icon  and not open the outer container with the click
+    e.stopPropagation();
 
-        setLikes(newLikes)
-        likePost({postId: post.$id, likesArray: newLikes})
+    let newLikes = [...likes];
+
+    const hasLiked = newLikes.includes(userId);
+
+    if (hasLiked) {
+      newLikes = newLikes.filter((id) => id !== userId);
+    } else {
+      newLikes.push(userId);
     }
 
-    const handleSavePost = (e: React.MouseEvent) => {
-      e.stopPropagation();
+    setLikes(newLikes);
+    likePost({ postId: post.$id, likesArray: newLikes });
+  };
 
-      const savedPostRecord = currentUser?.save.find((record: Models.Document) => record.$id === post.$id)
+  const handleSavePost = (e: React.MouseEvent) => {
+    e.stopPropagation();
 
-      if(savedPostRecord) {
-        setIsSaved(false);
-        deleteSavedPost(savedPostRecord.$id)
+    if (savedPostRecord) {
+      setIsSaved(false);
+      deleteSavedPost(savedPostRecord.$id);
 
-        // return stops the execution of other code blocks
-      } else {
-          savePost ({postId: post.$id, userId})
-          setIsSaved(true);
-        }
-    };
-
-
-
-
+      // return stops the execution of other code blocks
+    } else {
+      savePost({ postId: post.$id, userId });
+      setIsSaved(true);
+    }
+  };
 
   return (
     <div className=" flex justify-between items-center z-20">
@@ -91,14 +105,14 @@ const PostStats = ({post, userId}: PostStatsProps) => {
       </div>
 
       <div className="flex gap-2">
-        <img
+         {isSavingPost || isDeletingSaved? <Loader/> : <img
           src={isSaved ? "/assets/icons/saved.svg" : "/assets/icons/save.svg"}
           alt="save"
           width={20}
           height={20}
           onClick={handleSavePost}
           className="cursor-pointer"
-        />
+        />}
         {/* <p className="small-medium lg:base-medium">0</p> */}
       </div>
     </div>

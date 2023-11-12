@@ -17,7 +17,7 @@ const PostCard = ({post}: PostCardProps) => {
 
     if(!post.creator) return;
 
-    console.log(post)
+    // console.log(post)
 
 // capitalize first letter of tag
     const capitalizeFirstLetter = (str: string): string => {
