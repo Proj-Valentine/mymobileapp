@@ -231,3 +231,73 @@ export async function getRecentPosts() {
         console.log(error)
     }
 }
+
+// GET LIKED POST
+// get id of users who likes your post
+export async function likePost(postId: string, likesArray: string[]) {
+    try {
+        const updatedPost = await databases.updateDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.postCollectionId,
+            postId,
+            {
+                likes: likesArray
+            }
+        )
+
+        if(!updatedPost) throw Error;
+
+        return updatedPost;
+
+    } catch (error) {
+        console.log(error)
+    }
+    
+}
+
+// SAVE POST
+
+export async function savePost(postId: string, userId: string) {
+    try {
+        const updatedPost = await databases.createDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.savesCollectionId,
+            ID.unique(),
+            {
+                user: userId,
+                post: postId
+            }
+        )
+
+        if(!updatedPost) throw Error;
+
+        return updatedPost;
+
+    } catch (error) {
+        console.log(error)
+    }
+    
+}
+
+//DELETE POST FROM DB
+
+export async function deleteSavedPost(saveRecordId: string) {
+    try {
+
+        // deleteDocument returns a statuscode
+        const statusCode = await databases.deleteDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.savesCollectionId,
+            saveRecordId,
+
+        )
+
+        if(!statusCode) throw Error;
+
+        return {status: "ok"};
+
+    } catch (error) {
+        console.log(error)
+    }
+    
+}
