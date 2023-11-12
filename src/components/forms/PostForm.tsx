@@ -33,7 +33,8 @@ import { useNavigate } from "react-router-dom";
 
 // Models is coming from appwrite
 type PostFormProps = {
-    post?: Models.Document
+    post?: Models.Document;
+    action: 'Create' | 'Update';
 }
 
 

@@ -279,7 +279,7 @@ export async function savePost(postId: string, userId: string) {
     
 }
 
-//DELETE POST FROM DB
+//DELETE SAVE POST FROM DB
 
 export async function deleteSavedPost(saveRecordId: string) {
     try {
@@ -300,4 +300,23 @@ export async function deleteSavedPost(saveRecordId: string) {
         console.log(error)
     }
     
+}
+
+// FETCH OLD POST usig post id..
+// after fteching create a mutation using react QEURY
+
+export async function getPostById ( postId: string) {
+    try{
+        const post = await databases.getDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.postCollectionId,
+            postId
+        )
+
+        return post
+
+    } catch (error) {
+        console.log(error)
+    }
+
 }
