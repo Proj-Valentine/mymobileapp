@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Routes, Route } from 'react-router-dom';
 // without curly braces implies default import
 import SigninForm from './_auth/forms/SigninForm';
