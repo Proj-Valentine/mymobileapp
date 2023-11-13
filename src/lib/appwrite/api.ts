@@ -1,6 +1,6 @@
 //  after establishing and connecting to client, creating a function to perform an action
 import { INewPost, INewUser, IUpdatePost} from "@/types";
-import { ID, Query } from "appwrite";
+import { ID, Query,  } from "appwrite";
 import { account, appwriteConfig, avatars, databases, storage } from "./config";
 
 // in typescript types are enforced when defining functions , so INewUser is a variable that has its values as data:type key value pairs inside the 'type' folder in the index.ts file
@@ -398,8 +398,31 @@ export async function deletePost(postId: string, imageId: string) {
 }
 
 // gET INFINITE POST
-export async function getInfinitePosts({ pageParam }: { pageParam: number }) {
-  const queries: any[] = [Query.orderDesc("$updatedAt"), Query.limit(10)];
+// export async function getInfinitePosts({ pageParam }: { pageParam: number }) {
+//   const queries: any[] = [Query.orderDesc("$updatedAt"), Query.limit(10)];
+
+//   if (pageParam) {
+//     queries.push(Query.cursorAfter(pageParam.toString()));
+//   }
+
+//   try {
+//     const posts = await databases.listDocuments(
+//       appwriteConfig.databaseId,
+//       appwriteConfig.postCollectionId,
+//       queries
+//     );
+
+//     if (!posts) throw Error;
+
+//     return posts;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
+
+export async function getInfinitePosts({ pageParam }: { pageParam: number}) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const queries: any[] = [Query.orderDesc("$updatedAt"), Query.limit(15)]
 
   if (pageParam) {
     queries.push(Query.cursorAfter(pageParam.toString()));

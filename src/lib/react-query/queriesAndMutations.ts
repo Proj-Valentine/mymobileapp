@@ -188,6 +188,7 @@ export const useGetPosts = () => {
   });
 };
 
+
 export const useSearchPosts = (searchTerm: string) => {
   return useQuery({
     // add searchTerm to avoid caching of old search
