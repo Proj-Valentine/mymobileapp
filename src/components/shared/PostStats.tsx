@@ -6,14 +6,16 @@ import Loader from "./Loader";
 
 // create type for post props
 type PostStatsProps = {
-  post: Models.Document;
+  post?: Models.Document;
   userId: string;
 };
+
+// post? in declaring a variable is to declare it as optional
 
 const PostStats = ({post, userId}: PostStatsProps) => {
   // current likes on a post
 
-  const likesList = post.likes.map((user: Models.Document) => user.$id);
+  const likesList = post?.likes.map((user: Models.Document) => user.$id);
 
   // create two use state
   const [likes, setLikes] = useState(likesList);
@@ -31,7 +33,7 @@ const PostStats = ({post, userId}: PostStatsProps) => {
   // need to get the current SAVED state of the post when the page is RELOADED just like for the LIKES
 
   const savedPostRecord = currentUser?.save.find(
-    (record: Models.Document) => record.post.$id === post.$id
+    (record: Models.Document) => record.post.$id === post?.$id
   );
 
     // console.log(savedPostRecord);
@@ -63,7 +65,7 @@ const PostStats = ({post, userId}: PostStatsProps) => {
     }
 
     setLikes(newLikes);
-    likePost({ postId: post.$id, likesArray: newLikes });
+    likePost({ postId: post?.$id || "", likesArray: newLikes });
   };
 
   const handleSavePost = (e: React.MouseEvent) => {
@@ -75,7 +77,7 @@ const PostStats = ({post, userId}: PostStatsProps) => {
 
       // return stops the execution of other code blocks
     } else {
-      savePost({ postId: post.$id, userId });
+      savePost({ postId: post?.$id || "", userId });
       setIsSaved(true);
     }
   };
