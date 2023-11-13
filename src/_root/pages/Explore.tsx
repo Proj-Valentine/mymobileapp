@@ -1,13 +1,17 @@
 import GridPostList from '@/components/shared/GridPostList';
 import Loader from '@/components/shared/Loader';
-import PostStats from '@/components/shared/PostStats';
 import SearchResults from '@/components/shared/SearchResults';
 import { Input } from '@/components/ui/input'
 import useDebounce from '@/hooks/useDebounce';
 import { useGetPosts, useSearchPosts } from '@/lib/react-query/queriesAndMutations';
-import { useState } from 'react'
+import { useState,useEffect } from 'react';
+
+import { useInView } from 'react-intersection-observer';
 
 const Explore = () => {
+
+  // we use the ref to refernece our inview variable, 
+  const {ref, inView} = useInView();
 
   const { data: posts, fetchNextPage, hasNextPage } = useGetPosts();
 
@@ -17,6 +21,12 @@ const Explore = () => {
 
   const debouncedSearch = useDebounce(searchValue, 500);
   const { data: searchedPosts, isFetching: isSearchFetching } = useSearchPosts(debouncedSearch);
+
+  useEffect(() => {
+    // INFINITE SCROLL
+    // when ref inview and not search value, we fetch the next page to plement infinit scroll
+    if(inView && !searchValue) fetchNextPage();
+  },[inView, searchValue])
 
   // if NO POST 
     if (!posts)
@@ -77,8 +87,14 @@ const Explore = () => {
           <p className='text-light-4 mt-10 text-center w-full'> End of posts</p>
         ): posts.pages.map((item,index) => (<GridPostList key ={`page-${index}`} posts={item.documents}/>
         ))}
-
       </div>
+
+      {hasNextPage && !searchValue && (
+        // ref is used to check once the page get to the botton of the view we want to load next page: once the ref is in view
+        <div ref={ref} className="mt-10">
+          <Loader/>
+        </div>
+      )}
 
 
 
