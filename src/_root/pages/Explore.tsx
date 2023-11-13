@@ -4,7 +4,7 @@ import SearchResults from '@/components/shared/SearchResults';
 import { Input } from '@/components/ui/input'
 import useDebounce from '@/hooks/useDebounce';
 import { useGetPosts, useSearchPosts } from '@/lib/react-query/queriesAndMutations';
-import { Models } from 'appwrite';
+// import { Models } from 'appwrite';
 import { useState,useEffect } from 'react';
 
 import { useInView } from 'react-intersection-observer';
@@ -30,7 +30,7 @@ const Explore = () => {
   useEffect(() => {
     // INFINITE SCROLL
     // when ref inview and not search value, we fetch the next page to plement infinit scroll
-    if(inView && !searchValue) fetchNextPage();
+    if(inView && !searchValue) {fetchNextPage()}
   },[inView, searchValue])
 
   // if NO POST 
@@ -47,64 +47,76 @@ const Explore = () => {
   const shouldShowPosts = !shouldShowSearchResults && posts.pages.every((item) => item.documents.length === 0)
 
   return (
-    <div className= "explore-container">
-      <div className='explore-inner_container'>
-        <h2 className='h3-bold md:h2-bold w-full'> Search Post</h2>
-        <div className='flex gap-1 px-4 w-full rounded-lg bg-dark-4'>
+    <div className="explore-container">
+      <div className="explore-inner_container">
+        <h2 className="h3-bold md:h2-bold w-full"> Search Post</h2>
+        <div className="flex gap-1 px-4 w-full rounded-lg bg-dark-4">
           <img
-          src="/assets/icons/search.svg"
-          width = {24}
-          height={24}
-          alt="search"
+            src="/assets/icons/search.svg"
+            width={24}
+            height={24}
+            alt="search"
           />
 
-          <Input 
-          type="text"
-          placeholder='Search'
-          className='explore-search'
-          value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
-          
+          <Input
+            type="text"
+            placeholder="Search"
+            className="explore-search"
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
           />
-
         </div>
       </div>
 
       <div className="flex-between w-full max-w-5xl mt-16 mb-7">
-        <h3 className='body-bold md:h3-bold' > Popular Today</h3>
+        <h3 className="body-bold md:h3-bold"> Popular Today</h3>
         <div className=" flex-center gap-3 bg-dark-3 rounded-xl px-4 py-2 cursor-pointer">
-          <p className='small-medium md:base-medium text-light-2'> All </p>
+          <p className="small-medium md:base-medium text-light-2"> All </p>
           <img
-          src="/assets/icons/filter.svg"
-          width={20}
-          height={20}
-          alt="filter"
+            src="/assets/icons/filter.svg"
+            width={20}
+            height={20}
+            alt="filter"
           />
         </div>
       </div>
 
-      <div className='flex flex-wrap gap-9 w-full max-w-5xl'>
-        {shouldShowSearchResults? (<SearchResults
-        isSearchFecthing={isSearchFetching}
-        searchedPosts = {searchedPosts}
-        />)
-        : shouldShowPosts? (
-          <p className='text-light-4 mt-10 text-center w-full'> End of posts</p>
-        ): posts.pages.map((item,index) => (<GridPostList key ={`page-${index}`} posts={item.documents}/>
-        ))}
+      <div className="flex flex-wrap gap-9 w-full max-w-5xl">
+        {shouldShowSearchResults ? (
+          <SearchResults
+            isSearchFetching={isSearchFetching}
+            searchedPosts={searchedPosts.documents}
+          />
+        ) : shouldShowPosts ? (
+          <p className="text-light-4 mt-10 text-center w-full"> End of posts</p>
+        ) : (
+          posts.pages.map((item, index) => (
+            <GridPostList key={`page-${index}`} posts={item.documents} />
+          ))
+        )}
+
+        {/* {shouldShowSearchResults ? (
+          <SearchResults
+            isSearchFetching={isSearchFetching}
+            searchedPosts={searchedPosts.documents} // Assuming documents is the array you want
+          />
+        ) : shouldShowPosts ? (
+          <p className="text-light-4 mt-10 text-center w-full">End of posts</p>
+        ) : (
+          posts.pages.map((item, index) => (
+            <GridPostList key={`page-${index}`} posts={item.documents} />
+          ))
+        )} */}
       </div>
 
       {hasNextPage && !searchValue && (
         // ref is used to check once the page get to the botton of the view we want to load next page: once the ref is in view
         <div ref={ref} className="mt-10">
-          <Loader/>
+          <Loader />
         </div>
       )}
-
-
-
     </div>
-  )
+  );
 }
 
 export default Explore
