@@ -4,9 +4,12 @@ import SearchResults from '@/components/shared/SearchResults';
 import { Input } from '@/components/ui/input'
 import useDebounce from '@/hooks/useDebounce';
 import { useGetPosts, useSearchPosts } from '@/lib/react-query/queriesAndMutations';
+import { Models } from 'appwrite';
 import { useState,useEffect } from 'react';
 
 import { useInView } from 'react-intersection-observer';
+
+
 
 const Explore = () => {
 
@@ -21,6 +24,8 @@ const Explore = () => {
 
   const debouncedSearch = useDebounce(searchValue, 500);
   const { data: searchedPosts, isFetching: isSearchFetching } = useSearchPosts(debouncedSearch);
+
+  console.log(searchedPosts);
 
   useEffect(() => {
     // INFINITE SCROLL
