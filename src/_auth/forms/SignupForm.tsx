@@ -97,7 +97,11 @@ const SignupForm = () => {
           Create a new account
         </h2>
         <p className="text-light-3 small-medium md:base-regular mt-2">
-          To use snapgram, Please enter your details
+          To{" "}
+          <span className="text-xl font-semibold italic text-light-1">
+            SWIPE
+          </span>
+          , Please enter your details
         </p>
 
         <form
@@ -137,7 +141,7 @@ const SignupForm = () => {
                     placeholder="MrV"
                   />
                 </FormControl>
-                <FormDescription>
+                <FormDescription className="text-light-3 italic">
                   This is your public display name.
                 </FormDescription>
                 <FormMessage />
