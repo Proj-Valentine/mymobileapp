@@ -11,33 +11,32 @@ type GridPostListProps = {
 
 const GridPostList = ({ posts, showUser = true, showStats =true }: GridPostListProps) => {
   const { user } = useUserContext();
-  console.log(posts)
+  // console.log(posts)
 
   return (
     <ul className="grid-container">
       {posts.map((post) => (
         <li key={post.$id} className="relative min-w-80 h-80">
-            <Link to ={`/post/${post.$id}`} className="grip-post_link"> 
+          <Link to={`/posts/${post.$id}`} className="grip-post_link">
             <img
-            src={post.imageUrl}
-            alt='post'
-            className="h-full w-full object-cover"/>
-            </Link>
-            <div className="grid-post_user">
-                {showUser && (
-                    <div className="flex items-center justify-start gap-2 flex-1">
-                        <img src={post.creator.imageUrl}
+              src={post.imageUrl}
+              alt="post"
+              className="h-full w-full object-cover"
+            />
+          </Link>
+          <div className="grid-post_user">
+            {/* add conditional rendering to fix explorer page to show if post.creator is present */}
+            {showUser && post.creator && (
+              <div className="flex items-center justify-start gap-2 flex-1">
+                <img src={post.creator.imageUrl}
                         alt="creator"
                         className="h-8 w-8 rounded-full"/>
-                        <p className="line-clamp-1">{post.creator.name}</p>
+                <p className="line-clamp-1">{post.creator.name}</p>
+              </div>
+            )}
 
-                    </div>
-                )}
-
-                {showStats && <PostStats post={post} userId={user.id}/>}
-
-            </div>
-           
+            {showStats && <PostStats post={post} userId={user.id} />}
+          </div>
         </li>
       ))}
     </ul>
