@@ -52,7 +52,7 @@ const PostForm = ({ post, action }: PostFormProps) => {
 
     const navigate = useNavigate()
 
-    console.log(post)
+    // console.log(post)
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof PostValidation>>({

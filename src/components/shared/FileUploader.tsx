@@ -55,8 +55,8 @@ const FileUploader = ({fieldChange, mediaUrl}: FileUploaderProps) => {
             <img
               src={fileUrl}
               alt="image"
-            //   className="file_uploader-img"
-              className="rounded-full"
+              className="file_uploader-img"
+              // className="rounded-full"
             />
           </div>
             <p className="file_uploader-label">
