@@ -460,3 +460,55 @@ export async function searchPosts(searchTerm: string) {
     console.log(error);
   }
 }
+
+// GET INFINITE USERS
+
+export async function getInfiniteUsers({pageParam}) {
+    // query limit
+    const queries= [Query.limit(20)];
+
+    if (pageParam) {
+        // adding Query.cursorAfter(pageParam.toString() to queries array 
+        queries.push(Query.cursorAfter(pageParam.toString()));
+
+    }
+
+
+  try {
+    const users = await databases.listDocuments(
+        appwriteConfig.databaseId,
+        appwriteConfig.postCollectionId,
+        queries,
+    );
+
+    if (!users) throw Error;
+
+    return users;
+
+   
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getUsers(limit?: number) {
+    const queries = [Query.orderDesc("$createdAt")];
+     if (limit) {
+        queries.push(Query.limit(limit));
+    }
+
+
+  try {
+    const users = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      [Query.orderDesc("$createdAt"), Query.limit(10)]
+    );
+
+    if (!users) throw Error;
+
+    return users;
+  } catch (error) {
+    console.log(error);
+  }
+}
