@@ -21,7 +21,7 @@ const LeftSidebar = () => {
 
   return (
     <div>
-      <nav className="leftsidebar">
+      <nav className="leftsidebar flex justify-between">
         <div className="flex flex-col gap-11">
           <Link to="/" className="flex gap-3 items-center">
             <img
@@ -77,7 +77,7 @@ const LeftSidebar = () => {
           </ul>
         </div>
 
-        <div>
+        <div className="justify-end">
           <Button
             variant="ghost"
             className="shad-button_ghost"
