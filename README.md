@@ -1,27 +1,50 @@
-# React + TypeScript + Vite
+# SWIPE - Social App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Project Description:
+SWIPE is a modern social app designed for seamless user interaction and dynamic content sharing, backed by a robust backend service. This project is a work in progress, with continuous feature enhancements to deliver an engaging user experience. You can sign up and explore the app at [SWIPE](https://lnkd.in/emxGBCz3). Some pages may still be under development, so keep an eye out for friendly "Toast" notifications as the app evolves.
 
-Currently, two official plugins are available:
+## Key Features:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 📱 **Fully Mobile Responsive**: Optimized for all device sizes.
+- 👥 **User Authentication**: Sign Up, Sign In, and Sign Out functionalities.
+- 📝 **Post Management**: Create, view, save, and unsave posts.
+- ❤️ **Like System**: Like and unlike posts with real-time like counts.
+- 👤 **Profile Management**: Update your profile with ease.
+- 🔄 **Infinite Scroll**: For endless content exploration.
 
-## Expanding the ESLint configuration
+## Data Modeling (CRUD operations):
+- **One Database**
+  - **Three Collections**:
+    - Users
+    - Posts
+    - Saves
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Tech Stack:
 
-- Configure the top-level `parserOptions` property like this:
+### Logo Design:
+- **Figma**: For designing a sleek and modern app logo.
 
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
-```
+### Version Control:
+- **Git & GitHub**: To manage and track project development.
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+### Front-End:
+- **Vite**: For a fast and optimized development environment.
+- **TypeScript**: For a strongly-typed and error-free codebase.
+- **React**: To build dynamic user interfaces.
+- **Tanstack (React-Query)**: For automatic caching, refetching, and mutations.
+
+### Styling:
+- **Tailwind CSS**: For creating a modern and responsive UI effortlessly.
+
+### Forms and Validation:
+- **Shadcn Components**: To create consistent and accessible UI components.
+- **Zod**: For robust form validation and type-safe schemas.
+
+### Backend Service:
+- **Appwrite Cloud**: For managing the app's backend services like authentication and databases.
+
+### Deployment:
+- **AWS Amplify**: For hosting and managing the app in the cloud with continuous integration and deployment.
+
+## Explore SWIPE:
+Try it out at [SWIPE](https://lnkd.in/emxGBCz3) and explore the evolving features of this dynamic social platform.
